@@ -1,37 +1,5 @@
 --[[
 
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
     If you don't know anything about Lua, I recommend taking some time to read through
     a guide. One possible example which will only take 10-15 minutes:
       - https://learnxinyminutes.com/docs/lua/
@@ -41,27 +9,7 @@ What is Kickstart?
     - :help lua-guide
     - (or HTML version): https://neovim.io/doc/user/lua-guide.html
 
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
+    :Tutor untuk tutorial dan :help kalau bingung atau stuck
 
     MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
     which is very useful when you're not exactly sure of what you're looking for.
@@ -75,13 +23,7 @@ Kickstart Guide:
     Throughout the file. These are for you, the reader, to help you understand what is happening.
     Feel free to delete them once you know what you're doing, but they should serve as a guide
     for when you are first encountering a few different constructs in your Neovim config.
-
 If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
 -- Set <space> as the leader key
@@ -99,10 +41,11 @@ vim.g.have_nerd_font = false
 --  For more options, you can see `:help option-list`
 
 -- Make line numbers default
+-- vim.opt itu seperti set number atau set new cnah
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -110,25 +53,33 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- untuk folding aku pake default fold method-nya indent, default value dari foldmethod itu manual, dan bisa 2 value lain yaitu: indent & syntax
+-- vim.opt.foldmethod = 'indent' -- kayaknya gausah deh soalnya setiap membuka file jadi otomatis terfolding aih
+
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+--  jadi ini itu kalo copy dari internet misal, nah paste jadi bisa pake 'p', kalo mau normal gak terhubung atau misah dari antara sistem clipboard dan vim, bisa dicomment aja ini, aku dicomment aja welah biar paste ga bisa langsung p kalo dari luar vim
+--  kalo "+y itu kan ngopy ke sistem clipboard jadinya, nah <leader>y itu primeagen bikin remmap-nya taip aku manual aja deh lah "+y aja, dan berarti ini jadinya di komentarin
+-- vim.schedule(function()
+--   vim.opt.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.opt.breakindent = true
 
 -- Save undo history
+-- ini sangat berguna cnah ada plugin yang harus dicoba cnah
 vim.opt.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
+-- buat searching agar ignorecase
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Keep signcolumn on by default
+-- untuk lsp biar menampilkan pesan error atau marker di column jadinya, mantep sih ini
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
@@ -139,6 +90,7 @@ vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 
 -- Configure how new splits should be opened
+-- untuk split window, ctrl + w + v gening untuk horizontal dan ctrl + w + s untuk horizontal split alias ke bawah
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
@@ -149,12 +101,15 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
-vim.opt.inccommand = 'split'
+-- ketika :h incc lalu pencet tab akan memperlihatkan perubahan di jendela split terpisah jika di set ke 'split', kalo 'nosplit' akan tampil di bagian bawah atau buffer
+-- ada banyak banget option, maksudnya adalah cari aja dengan :h incc lalu tab yang dimana akan menjadi :h inccomand nah baca aja cnah karena banyak banget options ini
+vim.opt.inccommand = 'split' -- value lain adalah 'nosplit'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+vim.opt.cursorline = false -- kalau true akan jadi ada highlihght pada line dimana kursor kita berada, tapi gausahlah soalnya kalo pake vim original, jadinya kalo pake tema, jadi gak kelihatan line-nya karena highlight-nya warna-nya sama dengan huruf yang ada jadi ga keliatan, tapi di neovim ini tema-nya gatau ya aman ini tapi gausahlah ngikutin orang yang dipandu primeagen dimattin aja welah ga masalah juga dimatiin bagi aku soalnya
 
 -- Minimal number of screen lines to keep above and below the cursor.
+-- nah jadi ketika scroll akan tetap di sebelum <jumlah scrollof> jadi kursor tidak mentok ke bawah layar banget
 vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
@@ -162,10 +117,17 @@ vim.opt.scrolloff = 10
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+-- vim.opt.hlsearch = true -- ini udah ga ada pas dijelasin primeagen karena default-nya true
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>') -- vim.keymap.set ini sama kayak kalo di vim itu innoremap kata primeagen. Jadi ketika memencet escape, itu juga berarti melakukan :nohlsearch enter. Nah nohlsearch ini mematikan atau men-false-kan hlsearch true default tadi, jadi mati highlight-nya ketika esc atau kembali ke normal mode kan escape
+-- vim.keymap.set('i', 'jj', '<Esc>') -- gampang jadi ini kalo mau jj itu keluar dari insert mode jadinya kan, tapi aku lebih suka default pake ctrl + [ aja welah udah biasa
+-- vim.keymap.set('i', 'jk', function()
+--   print 'hello habibie'
+-- end)
+-- jadi ini contohnya, jadi bisa melakukan remmap dengan function juga mantul, jadi bisa dengan apapun yang kita mau cnah di parameter ke-3 ini
+-- kalo sudah melakukan perubahan di config init.lua, bisa melakukan :so atau singkatan dari :source untuk lihat langsung perubahan, tapi ketika menggunakan plugin lazy.nvim, berarti :so ini jadi tidak bisa
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' }) -- untuk melihat error
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -185,10 +147,15 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+--  nah ini untuk navigasi lebih mudah karena biasanya ketika split ctrl + w + v, maka pindah-nya adalah dengan ctrl + w + h (w dulu baru h), nah dengan ini jadi bisa langsung ctrl + h aja, kalo primeagen pake default dan aku juga sudah terbiasa pake default ctrl + w + h sih
+-- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+-- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- aku komentari soalnya di insert mode jadi ga bisa hapus satu karakter ke belakang dengan ctrl + h euy, tapi tetep gening ketika dikomen juga tetep ga bisa hapus satu karakter ke belakang dengan ctrl + h, ah teuinglah
+-- bikin aja welah mappingnya:
+-- Menggunakan vim.keymap.set untuk membuat pemetaan di Insert Mode
+-- vim.keymap.set('i', '<C-h>', '<BS>', { noremap = true, silent = true }) -- eh ga ngaruh tetep, keknya ada plugin yang bentrok dah
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -196,6 +163,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.highlight.on_yank()`
+--  mantap nih autocommand, kalo di vim biasa mah autocommand itu dikhususkan hanya untuk mendengarkan event dari editor, tapi bisa juga sih sebenernya di vim biasa juga
+--  jadi ini tuh sangat bermanfaat untuk feedback, terutama untuk pemula agar tidak visual mode dulu baru yank kan, jadi seperti pembiasaan juga untuk pemula mantap
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -237,6 +206,11 @@ require('lazy').setup({
   --
   -- Use `opts = {}` to force a plugin to be loaded.
   --
+  -- This is equivalent to:
+  --   require('Comment').setup({})
+
+  -- "gc" to comment visual regions/lines
+  { 'numToStr/Comment.nvim', opts = {} }, -- plugin untuk melakukan komentar
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
